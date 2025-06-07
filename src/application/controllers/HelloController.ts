@@ -1,16 +1,13 @@
-
-import { z } from 'zod';
+import z from 'zod';
 import { Controller } from '../contracts/Controller';
-
-const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Email is required'),
-});
+import { helloSchema } from './schemas/helloSchema';
 
 export class HelloController extends Controller<unknown> {
-  protected override schema = schema;
+  protected override schema = helloSchema;
 
-  protected override async handle(request: Controller.Request<unknown>): Promise<Controller.Response<unknown>> {
+  protected override async handle(
+    request: Controller.Request<HelloBody>)
+    : Promise<Controller.Response<unknown>> {
     return {
       statusCode: 200,
       body: {
@@ -19,3 +16,5 @@ export class HelloController extends Controller<unknown> {
     };
   }
 }
+
+export type HelloBody = z.infer<typeof helloSchema>;
