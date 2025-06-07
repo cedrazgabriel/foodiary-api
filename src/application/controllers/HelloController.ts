@@ -1,7 +1,9 @@
 import z from 'zod';
 import { Controller } from '../contracts/Controller';
 import { helloSchema } from './schemas/helloSchema';
+import { Schema } from '../../kernel/decorators/Schema';
 
+@Schema(helloSchema)
 export class HelloController extends Controller<unknown> {
   protected override schema = helloSchema;
 
