@@ -1,12 +1,29 @@
-export abstract class Controller<TBody = undefined> {
-  protected abstract handle(request: IController.Request): Promise<IController.Response<TBody>>;
+import { z } from 'zod';
 
-  public execute(request: IController.Request): Promise<IController.Response<TBody>> {
-    return this.handle(request);
+export abstract class Controller<TBody = undefined> {
+  protected schema?: z.ZodSchema;
+  protected abstract handle(request: Controller.Request): Promise<Controller.Response<TBody>>;
+
+  public execute(request: Controller.Request): Promise<Controller.Response<TBody>> {
+
+    const body = this.validateBody(request.body);
+
+    return this.handle({
+      ...request,
+      body,
+    });
+  }
+
+  private validateBody(body: Controller.Request['body']) {
+    if (!this.schema) {
+      return body;
+    }
+
+    return this.schema.parse(body);
   }
 }
 
-export namespace IController {
+export namespace Controller {
   export type Request<
     TBody = Record<string, unknown>,
     TParams = Record<string, unknown>,
