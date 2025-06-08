@@ -3,6 +3,9 @@ import { ZodError } from 'zod';
 
 import { lambdaBodyParser } from '../utils/lambdaBodyParser';
 import { Controller } from '../../application/contracts/Controller';
+import { ErrorCode } from '../../application/errors/ErrorCode';
+import { lambdaErrorResponse } from '../utils/lambdaErrorResponse';
+import { HttpError } from '../../application/errors/http/HttpError';
 
 export function lambdaHttpAdapter(controller: Controller<unknown>) {
   return async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
@@ -23,33 +26,25 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
       };
     } catch (error) {
       if (error instanceof ZodError) {
-        return {
+        return lambdaErrorResponse({
           statusCode: 400,
-          body: JSON.stringify(
-            {
-              error: {
-                code: 'VALIDATION',
-                message: error.issues.map((issue) => ({
-                  field: issue.path.join('.'),
-                  message: issue.message,
-                })),
-              },
-            },
-          ),
-        };
+          code: ErrorCode.VALIDATION,
+          message: error.issues.map((issue) => ({
+            field: issue.path.join('.'),
+            message: issue.message,
+          })),
+        });
       }
 
-      return {
+      if (error instanceof HttpError) {
+        return lambdaErrorResponse(error);
+      }
+
+      return lambdaErrorResponse({
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: 'Internal server error',
         statusCode: 500,
-        body: JSON.stringify(
-          {
-            error: {
-              code: 'INTERNAL_SERVER_ERROR',
-              message: 'Internal server error',
-            },
-          },
-        ),
-      };
+      });
     }
   };
 }
