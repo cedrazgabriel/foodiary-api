@@ -1,8 +1,7 @@
+import { Controller } from '@application/contracts/Controller';
+import { Schema } from '@kernel/decorators/Schema';
 import z from 'zod';
-
-import { Controller } from '../contracts/Controller';
 import { helloSchema } from './schemas/helloSchema';
-import { Schema } from '../../kernel/decorators/Schema';
 
 @Schema(helloSchema)
 export class HelloController extends Controller<unknown> {

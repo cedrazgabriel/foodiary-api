@@ -1,5 +1,5 @@
-import { ErrorCode } from '../ErrorCode';
-import { HttpError } from './HttpError';
+import { ErrorCode } from '@application/errors/ErrorCode';
+import { HttpError } from '@application/errors/http/HttpError';
 
 export class BadRequest extends HttpError {
     public override statusCode: number;
