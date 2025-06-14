@@ -19,6 +19,9 @@
       ],
       "@kernel/*": [
         "src/kernel/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
       ]
     }
   }

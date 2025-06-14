@@ -3,7 +3,9 @@ import { Schema } from '@kernel/decorators/Schema';
 import z from 'zod';
 import { helloSchema } from './schemas/helloSchema';
 import { HelloUseCase } from '@application/usecases/HelloUseCase';
+import { Injectable } from '@kernel/decorators/Injectable';
 
+@Injectable()
 @Schema(helloSchema)
 export class HelloController extends Controller<unknown> {
   constructor(private readonly helloUseCase: HelloUseCase) {
