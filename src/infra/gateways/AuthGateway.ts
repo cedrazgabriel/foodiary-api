@@ -1,3 +1,4 @@
+import { createHmac } from 'crypto';
 import { InitiateAuthCommand, SignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { Injectable } from '@kernel/decorators/Injectable';
 import { cognitoClient } from '../clients/cognitoClient';
@@ -16,6 +17,7 @@ export class AuthGateway {
             AuthParameters: {
                 USERNAME: email,
                 PASSWORD: password,
+                SECRET_HASH: this.getSecretHash(email),
             },
         });
 
@@ -38,6 +40,7 @@ export class AuthGateway {
             ClientId: this.appConfig.auth.cognito.clientId,
             Username: email,
             Password: password,
+            SecretHash: this.getSecretHash(email),
         });
 
         const { UserSub } = await cognitoClient.send(command);
@@ -49,6 +52,13 @@ export class AuthGateway {
         return {
             externalId: UserSub,
         };
+    }
+
+    private getSecretHash(email: string) {
+        const { clientId, clientSecret } = this.appConfig.auth.cognito;
+        return createHmac('SHA256', clientSecret)
+            .update(`${email}${clientId}`)
+            .digest('base64');
     }
 }
 
