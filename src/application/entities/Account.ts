@@ -7,10 +7,13 @@ export class Account {
 
     externalId: string;
 
+    readonly createdAt: Date;
+
     constructor(attributes: Account.Attributes) {
         this.id = KSUID.randomSync().string;
         this.email = attributes.email;
         this.externalId = attributes.externalId;
+        this.createdAt = new Date();
     }
 }
 
