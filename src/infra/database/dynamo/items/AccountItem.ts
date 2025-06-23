@@ -22,6 +22,15 @@ export class AccountItem {
         });
     }
 
+    static toEntity(accountItem: AccountItem.ItemType): Account {
+        return new Account({
+            id: accountItem.id,
+            email: accountItem.email,
+            externalId: accountItem.externalId,
+            createdAt: new Date(accountItem.createdAt),
+        });
+    }
+
     toItem(): AccountItem.ItemType {
         return {
             type: this.type,
