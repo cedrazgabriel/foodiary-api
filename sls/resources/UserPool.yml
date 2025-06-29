@@ -22,6 +22,19 @@ Resources:
           RequireNumbers: false
           RequireSymbols: false
           RequireUppercase: false
+      LambdaConfig:
+        PreTokenGenerationConfig:
+          LambdaArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGeneratorTrigger
+          LambdaVersion: V2_0
+
+  PreTokenGeneratorLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGeneratorTrigger
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
+
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
